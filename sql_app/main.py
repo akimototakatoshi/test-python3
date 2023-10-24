@@ -1,10 +1,12 @@
-from fastapi import FastAPI, depends
+from typing import List
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 
-models.Base.metadata.create_all(buind=engine)
+#データベースの生成
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -21,14 +23,31 @@ def get_db():
 # async def index():
 #     return {"message": "Success"}
 
-@app.post("/users")
-async def users(users: User):
-    return {"users": users}
+#Read
+@app.get("/users", response_model=List[schemas.User])
+async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users(db)
+    return users
 
-@app.post("/rooms")
-async def rooms(rooms: Room):
-    return {"rooms": rooms}
+@app.get("/rooms", response_model=List[schemas.Room])
+async def read_rooms(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    rooms = crud.get_rooms(db)
+    return rooms
 
-@app.post("/bookings")
-async def bookings(bookings: Booking):
-    return {"bookings": bookings}
+@app.get("/bookings", response_model=list[schemas.Booking])
+async def read_bookings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    bookings = crud.get_bookings(db)
+    return bookings
+
+#Create
+@app.post("/users", response_model=schemas.User)
+async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    return crud.create_user(db=db, user=user)
+
+@app.post("/rooms", response_model=schemas.Room)
+async def create_room(room: schemas.RoomCreate, db: Session = Depends(get_db)):
+    return crud.create_room(db=db, room=room)
+
+@app.post("/bookings", response_model=schemas.Booking)
+async def create_booking(booking: schemas.BookingCreate, db: Session = Depends(get_db)):
+    return crud.create_booking(db=db, booking=booking)
