@@ -52,3 +52,17 @@ def create_booking(db: Session, booking: schemas.Booking):
         return db_booking
     else:
         raise HTTPException(status_code=404, detail="Already booked")
+
+# ユーザーの削除
+def delete_user(db: Session, user_id: int) -> None:
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if user:
+        db.delete(user)
+        db.commit()
+
+def update_user(db: Session, user_id: int) -> model.User:
+    original.title = task_create.title
+    db.add(original)
+    await db.commit()
+    await db.refresh(original)
+    return original
