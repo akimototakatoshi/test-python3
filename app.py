@@ -191,7 +191,8 @@ elif page == "登録取り消し":
 
     if delete_button:
         user_id: int = users_name[username]
-        url_user_delete = "http://127.0.0.1:8000/users/{user_id}"
+        print(user_id)
+        url_user_delete = f"http://127.0.0.1:8000/users/{user_id}"
         res = requests.delete(
             url_user_delete
         )
