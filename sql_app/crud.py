@@ -59,10 +59,3 @@ def delete_user(db: Session, user_id: int) -> None:
     if user:
         db.delete(user)
         db.commit()
-
-def update_user(db: Session, user_id: int) -> model.User:
-    original.title = task_create.title
-    db.add(original)
-    await db.commit()
-    await db.refresh(original)
-    return original
