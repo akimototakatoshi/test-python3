@@ -53,7 +53,7 @@ async def create_booking(booking: schemas.BookingCreate, db: Session = Depends(g
     return crud.create_booking(db=db, booking=booking)
 
 # Delete
-@app.delete("/users/{user_id}", response_model=None)
+@app.delete("/users/{user_id}")
 async def delete_user(user_id: int, db: Session = Depends(get_db)):
     crud.delete_user(db, user_id=user_id)
     return "OK"
@@ -61,9 +61,3 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
 #@app.delete("/users", response_model=schemas.User)
 #async def delete_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     #return crud.delete_user(db=db, user=user)
-
-#update
-@app.put("/users/{user_id}", response_model=schema.User)
-async def update_user(user_id: int, db: schema.UserUpdate, db: Session = Depends(get_db)):
-    crud.update_user(db, task_id=task_id)
-    return "Update"

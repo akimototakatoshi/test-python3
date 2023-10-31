@@ -107,7 +107,6 @@ elif page == "予約登録":
     df_bookings["room_id"] = df_bookings["room_id"].map(to_room_name)
     df_bookings["start_datetime"] = df_bookings["start_datetime"].map(to_datetime)
     df_bookings["end_datetime"] = df_bookings["end_datetime"].map(to_datetime)
-    print(df_bookings)
     df_bookings = df_bookings.rename(columns={
         "user_id": "予約者名",
         "room_id": "会議室名",
@@ -177,19 +176,24 @@ elif page == "予約登録":
                 st.error("指定の時間にはすでに予約が入っています")
 
 elif page == "登録取り消し":
-    st.markdown("<h1 style='color: red;'>予約取り消し画面</h1>", unsafe_allow_html=True)
-
-    user_id: int = st.text_input("ユーザーIDを入力")
-    data = {
-        "user_id": user_id 
-    }
-    delete_button = st.button(label="ユーザー取り消し")
+    # ユーザー一覧取得
+    url_users = "http://127.0.0.1:8000/users"
+    res = requests.get(url_users)
+    users = res.json()
+    # ユーザー名をキー、ユーザーIDをバリュー
+    users_name = {}
+    for user in users:
+        users_name[user["username"]] = user["user_id"]
+        
+    with st.form(key="from"):
+        username: str = st.selectbox("予約者名", users_name.keys())
+        delete_button = st.form_submit_button(label="ユーザー取り消し")
 
     if delete_button:
-        url = "http://127.0.0.1:8000/users/{user_id}"
+        user_id: int = users_name[username]
+        url_user_delete = "http://127.0.0.1:8000/users/{user_id}"
         res = requests.delete(
-            url,
-            data=json.dumps(data)
+            url_user_delete
         )
         if res.status_code == 200:
             st.success("ユーザー取り消し完了")
