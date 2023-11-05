@@ -59,3 +59,10 @@ def delete_user(db: Session, user_id: int) -> None:
     if user:
         db.delete(user)
         db.commit()
+
+# 会議室の削除
+def delete_room(db: Session, room_id: int) -> None:
+    room = db.query(models.Room).filter(models.Room.room_id == room_id).first()
+    if room:
+        db.delete(room)
+        db.commit()

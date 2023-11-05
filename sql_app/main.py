@@ -58,6 +58,11 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
     crud.delete_user(db, user_id=user_id)
     return "OK"
    
+@app.delete("/rooms/{room_id}")
+async def delete_room(room_id: int, db: Session = Depends(get_db)):
+    crud.delete_room(db, room_id=room_id)
+    return "OK"
+
 #@app.delete("/users", response_model=schemas.User)
 #async def delete_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     #return crud.delete_user(db=db, user=user)

@@ -4,7 +4,7 @@ import requests
 import json
 import pandas as pd
 
-page = st.sidebar.selectbox("Choose your page", ["ユーザー登録", "会議室登録", "予約登録", "登録取り消し"])
+page = st.sidebar.selectbox("Choose your page", ["ユーザー登録", "会議室登録", "予約登録", "登録取り消し", "登録情報更新"])
 
 if page == "ユーザー登録":
     st.title("ユーザー登録画面")
@@ -176,6 +176,7 @@ elif page == "予約登録":
                 st.error("指定の時間にはすでに予約が入っています")
 
 elif page == "登録取り消し":
+    st.title("ユーザー取り消し")
     # ユーザー一覧取得
     url_users = "http://127.0.0.1:8000/users"
     res = requests.get(url_users)
@@ -185,11 +186,11 @@ elif page == "登録取り消し":
     for user in users:
         users_name[user["username"]] = user["user_id"]
         
-    with st.form(key="from"):
+    with st.form(key="usersfrom"):
         username: str = st.selectbox("予約者名", users_name.keys())
-        delete_button = st.form_submit_button(label="ユーザー取り消し")
+        user_delete_button = st.form_submit_button(label="ユーザー取り消し")
 
-    if delete_button:
+    if user_delete_button:
         user_id: int = users_name[username]
         print(user_id)
         url_user_delete = f"http://127.0.0.1:8000/users/{user_id}"
@@ -200,3 +201,32 @@ elif page == "登録取り消し":
             st.success("ユーザー取り消し完了")
         elif res.status_code == 404 or res.status_code == 422:
             st.error("取り消しに失敗しました。")
+
+    # 会議室一覧取得
+    url_rooms = "http://127.0.0.1:8000/rooms"
+    res = requests.get(url_rooms)
+    rooms = res.json()
+        # ユーザー名をキー、ユーザーIDをバリュー
+    rooms_name = {}
+    for room in rooms:
+        rooms_name[room["room_name"]] = room["room_id"]
+        
+    with st.form(key="roomsfrom"):
+        room_name: str = st.selectbox("会議室名", rooms_name.keys())
+        room_delete_button = st.form_submit_button(label="会議室取り消し")
+
+
+    if room_delete_button:
+        room_id: int = rooms_name[room_name]
+        print(room_id)
+        url_room_delete = f"http://127.0.0.1:8000/rooms/{room_id}"
+        res = requests.delete(
+            url_room_delete
+        )
+        if res.status_code == 200:
+            st.success("会議室取り消し完了")
+        elif res.status_code == 404 or res.status_code == 422:
+            st.error("取り消しに失敗しました。")
+
+elif page == "登録情報更新":
+    st.title("ユーザー情報更新")
